@@ -240,7 +240,7 @@
   }
 
 
- function selectLocation(place) {
+ async function selectLocation(place) {
   const result = document.getElementById("result");
 
   const selectedLocation = {
@@ -249,6 +249,7 @@
     longitude: Number(place.lon)
   };
 
+  // Save the selected location
   localStorage.setItem(
     "qazaTimeLocation",
     JSON.stringify(selectedLocation)
@@ -256,16 +257,67 @@
 
   result.innerHTML =
     "<h3>✅ Location Selected</h3>" +
-    "<p><strong>" +
-    selectedLocation.name +
-    "</strong></p>" +
+    "<p><strong>" + selectedLocation.name + "</strong></p>" +
     "<p>Latitude: " + selectedLocation.latitude + "</p>" +
     "<p>Longitude: " + selectedLocation.longitude + "</p>" +
-    "<p>📍 Location saved.</p>";
+    "<p>🕌 Loading prayer times...</p>";
 
-  console.log("Selected location:", selectedLocation);
+  try {
+    const today = new Date();
+
+    const day = String(today.getDate()).padStart(2, "0");
+    const month = String(today.getMonth() + 1).padStart(2, "0");
+    const year = today.getFullYear();
+
+    const url =
+      "https://api.aladhan.com/v1/timings/" +
+      day + "-" + month + "-" + year +
+      "?latitude=" + selectedLocation.latitude +
+      "&longitude=" + selectedLocation.longitude +
+      "&method=1" +
+      "&school=1";
+
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      throw new Error("Prayer time request failed");
+    }
+
+    const data = await response.json();
+
+    const timings = data.data.timings;
+
+    document.querySelector(".prayer:nth-of-type(1) strong").textContent =
+      timings.Fajr;
+
+    document.querySelector(".prayer:nth-of-type(2) strong").textContent =
+      timings.Sunrise;
+
+    document.querySelector(".prayer:nth-of-type(3) strong").textContent =
+      timings.Dhuhr;
+
+    document.querySelector(".prayer:nth-of-type(4) strong").textContent =
+      timings.Asr;
+
+    document.querySelector(".prayer:nth-of-type(5) strong").textContent =
+      timings.Maghrib;
+
+    document.querySelector(".prayer:nth-of-type(6) strong").textContent =
+      timings.Isha;
+
+    result.innerHTML =
+      "<h3>✅ Location Selected</h3>" +
+      "<p><strong>" + selectedLocation.name + "</strong></p>" +
+      "<p>🕌 Prayer times loaded.</p>";
+
+  } catch (error) {
+    console.error(error);
+
+    result.innerHTML =
+      "<h3>⚠️ Prayer time error</h3>" +
+      "<p>We couldn't load prayer times. Please try again.</p>";
+  }
 }
-
 
   function useCurrentLocation() {
     const result = document.getElementById("result");
