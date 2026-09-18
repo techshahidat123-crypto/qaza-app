@@ -3,30 +3,194 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>Qaza Time</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f7fa;
+      color: #17202a;
+    }
+
+    .header {
+      background: #0f5132;
+      color: white;
+      padding: 25px 20px;
+      text-align: center;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 32px;
+    }
+
+    .header p {
+      margin: 8px 0 0;
+      font-size: 16px;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 30px auto;
+      padding: 20px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 22px;
+      margin-bottom: 20px;
+      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .card h2 {
+      margin-top: 0;
+    }
+
+    .location-input {
+      width: 100%;
+      padding: 15px;
+      font-size: 16px;
+      border: 1px solid #ccd1d1;
+      border-radius: 10px;
+      margin-bottom: 12px;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+
+    .search-button {
+      background: #0f5132;
+      color: white;
+    }
+
+    .current-button {
+      background: #e8f5e9;
+      color: #0f5132;
+    }
+
+    #result {
+      margin-top: 20px;
+      font-size: 16px;
+    }
+
+    .prayer {
+      display: flex;
+      justify-content: space-between;
+      padding: 14px 0;
+      border-bottom: 1px solid #eeeeee;
+    }
+
+    .prayer:last-child {
+      border-bottom: none;
+    }
+  </style>
 </head>
 
 <body>
-  <h1>Qaza Time</h1>
-  <p>Prayer time and Qaza checker</p>
 
-  <input
-    type="text"
-    id="location"
-    placeholder="Enter a place, e.g. Mankave"
-  >
+  <div class="header">
+    <h1>Qaza Time</h1>
+    <p>Prayer Time & Qaza Checker</p>
+  </div>
 
-  <button onclick="searchLocation()">Search</button>
+  <div class="container">
 
-  <p id="result"></p>
+    <div class="card">
+      <h2>📍 Choose Your Location</h2>
+
+      <input
+        class="location-input"
+        id="location"
+        type="text"
+        placeholder="Enter a place, e.g. Mankave"
+      >
+
+      <button
+        class="search-button"
+        onclick="searchLocation()"
+      >
+        🔍 Search Location
+      </button>
+
+      <button
+        class="current-button"
+        onclick="useCurrentLocation()"
+      >
+        📍 Use Current Location
+      </button>
+
+      <div id="result"></div>
+    </div>
+
+    <div class="card">
+      <h2>🕌 Prayer Times</h2>
+
+      <div class="prayer">
+        <span>Fajr</span>
+        <strong>--:--</strong>
+      </div>
+
+      <div class="prayer">
+        <span>Sunrise</span>
+        <strong>--:--</strong>
+      </div>
+
+      <div class="prayer">
+        <span>Zuhr</span>
+        <strong>--:--</strong>
+      </div>
+
+      <div class="prayer">
+        <span>Asr</span>
+        <strong>--:--</strong>
+      </div>
+
+      <div class="prayer">
+        <span>Maghrib</span>
+        <strong>--:--</strong>
+      </div>
+
+      <div class="prayer">
+        <span>Isha</span>
+        <strong>--:--</strong>
+      </div>
+    </div>
+
+  </div>
 
   <script>
     function searchLocation() {
       const location = document.getElementById("location").value;
 
+      if (location.trim() === "") {
+        document.getElementById("result").textContent =
+          "Please enter a place.";
+        return;
+      }
+
       document.getElementById("result").textContent =
-        "You searched for: " + location;
+        "Searching for: " + location;
+    }
+
+    function useCurrentLocation() {
+      document.getElementById("result").textContent =
+        "Current location feature will be added next.";
     }
   </script>
+
 </body>
 </html>
