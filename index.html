@@ -240,19 +240,31 @@
   }
 
 
-  function selectLocation(place) {
-    const result = document.getElementById("result");
+ function selectLocation(place) {
+  const result = document.getElementById("result");
 
-    result.innerHTML =
-      "<h3>✅ Location Selected</h3>" +
-      "<p><strong>" +
-      place.display_name +
-      "</strong></p>" +
-      "<p>Latitude: " + place.lat + "</p>" +
-      "<p>Longitude: " + place.lon + "</p>";
+  const selectedLocation = {
+    name: place.display_name,
+    latitude: Number(place.lat),
+    longitude: Number(place.lon)
+  };
 
-    console.log("Selected place:", place);
-  }
+  localStorage.setItem(
+    "qazaTimeLocation",
+    JSON.stringify(selectedLocation)
+  );
+
+  result.innerHTML =
+    "<h3>✅ Location Selected</h3>" +
+    "<p><strong>" +
+    selectedLocation.name +
+    "</strong></p>" +
+    "<p>Latitude: " + selectedLocation.latitude + "</p>" +
+    "<p>Longitude: " + selectedLocation.longitude + "</p>" +
+    "<p>📍 Location saved.</p>";
+
+  console.log("Selected location:", selectedLocation);
+}
 
 
   function useCurrentLocation() {
