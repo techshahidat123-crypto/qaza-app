@@ -173,23 +173,120 @@
   </div>
 
   <script>
-    function searchLocation() {
-      const location = document.getElementById("location").value;
+    <script>
+  async function searchLocation() {
+    const input = document.getElementById("location").value.trim();
+    const result = document.getElementById("result");
 
-      if (location.trim() === "") {
-        document.getElementById("result").textContent =
-          "Please enter a place.";
+    if (input === "") {
+      result.textContent = "Please enter a place.";
+      return;
+    }
+
+    result.textContent = "🔎 Searching...";
+
+    try {
+      const url =
+        "https://nominatim.openstreetmap.org/search" +
+        "?q=" + encodeURIComponent(input) +
+        "&format=jsonv2" +
+        "&addressdetails=1" +
+        "&limit=5";
+
+      const response = await fetch(url, {
+        headers: {
+          "Accept": "application/json"
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error("Search failed");
+      }
+
+      const places = await response.json();
+
+      if (places.length === 0) {
+        result.innerHTML =
+          "❌ No place found.<br><br>" +
+          "Try typing a nearby town, city, or district.";
         return;
       }
 
-      document.getElementById("result").textContent =
-        "Searching for: " + location;
+      result.innerHTML = "<h3>📍 Choose a location:</h3>";
+
+      places.forEach((place, index) => {
+        const button = document.createElement("button");
+
+        button.textContent = place.display_name;
+        button.style.background = "#ffffff";
+        button.style.color = "#17202a";
+        button.style.border = "1px solid #ccd1d1";
+        button.style.textAlign = "left";
+        button.style.marginTop = "10px";
+
+        button.onclick = function () {
+          selectLocation(place);
+        };
+
+        result.appendChild(button);
+      });
+
+    } catch (error) {
+      console.error(error);
+
+      result.innerHTML =
+        "❌ Something went wrong while searching.<br>" +
+        "Please try again.";
+    }
+  }
+
+
+  function selectLocation(place) {
+    const result = document.getElementById("result");
+
+    result.innerHTML =
+      "<h3>✅ Location Selected</h3>" +
+      "<p><strong>" +
+      place.display_name +
+      "</strong></p>" +
+      "<p>Latitude: " + place.lat + "</p>" +
+      "<p>Longitude: " + place.lon + "</p>";
+
+    console.log("Selected place:", place);
+  }
+
+
+  function useCurrentLocation() {
+    const result = document.getElementById("result");
+
+    if (!navigator.geolocation) {
+      result.textContent =
+        "❌ Your browser does not support location.";
+      return;
     }
 
-    function useCurrentLocation() {
-      document.getElementById("result").textContent =
-        "Current location feature will be added next.";
-    }
+    result.textContent =
+      "📍 Asking for your current location...";
+
+    navigator.geolocation.getCurrentPosition(
+      function (position) {
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
+
+        result.innerHTML =
+          "<h3>✅ Current Location Found</h3>" +
+          "<p>Latitude: " + latitude + "</p>" +
+          "<p>Longitude: " + longitude + "</p>";
+      },
+
+      function () {
+        result.innerHTML =
+          "❌ Location permission was not allowed.<br><br>" +
+          "You can search for your place manually.";
+      }
+    );
+  }
+</script>
   </script>
 
 </body>
